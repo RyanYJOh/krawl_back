@@ -1,3 +1,6 @@
 from django.db import models
 
-# Create your models here.
+# Contents_D
+# WinnerContents_D
+# Opinions_D
+# Likes_H
