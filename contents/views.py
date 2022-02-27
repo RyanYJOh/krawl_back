@@ -28,7 +28,8 @@ def post(request):
     if request.method == 'GET':
         return HTTPResponse(status=200)
     elif request.method == 'POST':
-        ## 콘텐츠 POST
+        ## 토큰 확인
+        print(request.auth)
         posted = request.data
 
         user_id = User.objects.get(id=posted['user_id'])
@@ -138,3 +139,11 @@ def getDelLike(request, pk):
         this_likeH = Likes_History.objects.get(id=pk)
         this_likeH.del_yn = True
         this_likeH.save()
+
+@api_view(['GET'])
+@permission_classes((AllowAny,))
+def getAllPosts(request):
+    all_posts = Contents_Detail.objects.filter(date_check=True).order_by('-created_at')
+    serializer = ContentsD_Serializer(all_posts, many=True)
+
+    return Response(serializer.data, status=200)

@@ -4,6 +4,7 @@ from django.conf.urls import include
 
 urlpatterns = [
     # path('api', views.apiOverview),
+    path('', views.getAllPosts),
     path('post-content', views.post),
     path('likes', views.postLike), 
     path('likes/<int:pk>', views.getDelLike),

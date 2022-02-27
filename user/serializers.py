@@ -27,7 +27,7 @@ class UserProfileM_Serializer(serializers.ModelSerializer):
 class UserPointH_Serializer(serializers.ModelSerializer):
     class Meta:
         model = UserPoint_History
-        fields = ['id', 'user_id', 'point_id', 'received_at', 'amount_point']
+        fields = ['id', 'user_id', 'point_id', 'change_date', 'change_point']
 
 class UserPointM_Serializer(serializers.ModelSerializer):
     class Meta:
