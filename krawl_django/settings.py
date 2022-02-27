@@ -119,7 +119,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'd1dd849rp77pks', # heroku Database Credentials에서 `Database` 항목
         'USER': 'ucrsdpppqpyrgf',
-        'PASSWORD': 'f743b418b4b4b5f936aadf0ba7847f6914d75c105a10ed0b9aba91b9b8d280fe',
+        'PASSWORD': config('DATABASE_PASSWORD'),
         'HOST': 'ec2-3-227-195-74.compute-1.amazonaws.com',
         'PORT': '5432',
     }
