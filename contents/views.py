@@ -129,9 +129,11 @@ def getDelLike(request, pk):
     elif request.method == 'DELETE':
         ## Likes_Master에서는 지움
         this_content = Likes_History.objects.get(id=pk).content_id.id
+        
         this_likeM = Likes_Master.objects.get(content_id=this_content)
         this_likeM.count_like = this_likeM.count_like - 1
-
+        this_likeM.save()
+        
         ## Likes_History에서는 del_yn만 변경
         this_likeH = Likes_History.objects.get(id=pk)
         this_likeH.del_yn = True
