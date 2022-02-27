@@ -18,11 +18,13 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from user.views import register, login
+from contents.views import post
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('accounts/', include('user.urls')),
+    path('contents/', include('contents.urls')),
     path('login', login),
     path('register', register),
 

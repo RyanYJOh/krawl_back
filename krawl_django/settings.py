@@ -64,6 +64,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
     # 'cloudinary_storage',
     # 'cloudinary',
 
@@ -85,6 +86,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'krawl_django.urls'
@@ -220,3 +222,6 @@ DATABASES['default'].update(db_from_env)
 ## Reset pw
 
 #######
+
+CORS_ORIGIN_WHITELIST = ['https://krawl-backend.herokuapp.com']
+CORS_ALLOW_CREDENTIALS = True

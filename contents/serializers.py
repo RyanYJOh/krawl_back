@@ -1,10 +1,11 @@
 from rest_framework import serializers
-from .models import Competitions_Master, WinnerContents_Detail, Likes_History
+from .models import Contents_Detail, WinnerContents_Detail, Likes_History, Likes_Master
 
-class CompetitionsM_Serializer(serializers.ModelSerializer):
+class ContentsD_Serializer(serializers.ModelSerializer):
+    
     class Meta:
-        model = Competitions_Master
-        fields = ['id', 'competition_id', 'url', 'raw_date', 'created_at', 'date_check', 'opinion', 'tag', 'del_yn']
+        model = Contents_Detail
+        fields = ['id', 'user_id', 'competition_id', 'url', 'raw_date', 'created_at', 'date_check', 'opinion', 'tag', 'del_yn']
 
 class WinnerContentsD_Serializer(serializers.ModelSerializer):
     class Meta:
@@ -16,10 +17,15 @@ class LikesH_Serializer(serializers.ModelSerializer):
         model = Likes_History
         fields = ['id', 'user_id', 'content_id', 'del_yn']
 
+class LikesM_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Likes_Master
+        fields = ['id', 'content_id', 'count_like']
+
 '''
 bookcake에서 가져온 tips
 --------
-A 모델의 a필드가, id가 아닌 string값으로 serialize되게 하려면
+A 모델의 a필드가, id가 아닌 값으로 serialize되게 하려면
 
 a = serializers.StringRelatedField(many=True)
 

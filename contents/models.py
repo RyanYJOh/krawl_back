@@ -22,6 +22,10 @@ class WinnerContents_Detail(models.Model):
     awarded_at = models.DateField(auto_now_add=False)
 
 class Likes_History(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes', null=False)
-    content_id = models.ForeignKey(Contents_Detail, on_delete=models.CASCADE, related_name='likes', null=False)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes_history', null=False)
+    content_id = models.ForeignKey(Contents_Detail, on_delete=models.CASCADE, related_name='likes_history', null=False)
     del_yn = models.BooleanField(default=False)
+
+class Likes_Master(models.Model):
+    content_id = models.ForeignKey(Contents_Detail, on_delete=models.CASCADE, related_name='likes_master', null=False)
+    count_like = models.IntegerField(null=False)
