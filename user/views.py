@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import Account
-from .serializers import AccountSerializer
+from django.contrib.auth.models import User
+from .serializers import UserSerializer
 from django.contrib.auth import authenticate
 from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view, permission_classes
@@ -19,16 +19,18 @@ def apiOverview(request):
 
 @csrf_exempt
 @api_view(['GET'])
+@permission_classes((AllowAny,))
 def account_list(request): ## 게정 전체 조회(GET)
-    query_set = Account.objects.all()
-    serializer = AccountSerializer(query_set, many=True)
+    query_set = User.objects.all()
+    serializer = UserSerializer(query_set, many=True)
     return Response(serializer.data) # safe=False
 
 @csrf_exempt
 @api_view(['POST'])
+@permission_classes((AllowAny,))
 def register(request): # 회원가입 (POST)
     data = JSONParser().parse(request)
-    serializer = AccountSerializer(data=data)
+    serializer = UserSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=201)
@@ -36,17 +38,18 @@ def register(request): # 회원가입 (POST)
 
 @csrf_exempt
 @api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes((AllowAny,))
 def account(request, pk): ## 특정계정 조회(GET), 수정(PUT), 삭제(DELETE)
 
-    obj = Account.objects.get(pk=pk)
+    obj = User.objects.get(pk=pk)
 
     if request.method == 'GET':
-        serializer = AccountSerializer(obj)
-        return Response(serializer.data, safe=False)
+        serializer = UserSerializer(obj)
+        return Response(serializer.data) # safe=False
 
     elif request.method == 'PUT':
         data = JSONParser().parse(request)
-        serializer = AccountSerializer(obj, data=data)
+        serializer = UserSerializer(obj, data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)
@@ -74,8 +77,28 @@ def login(request):
         return Response({'error': 'Invalid credentials'}, status=404)
 
 	# user 로 토큰 발행
-    token, _ = Token.objects.get_or_create(user=user)
-    
+    # token, _ = Token.objects.get_or_create(user=user)
+    token = Token.objects.get_or_create(user=user)
     return Response({'token': token.key}, status=200)
 
 ## logout은?
+
+
+# @api_view(['POST'])
+# def register(request):
+#     user = User.objects.create_user(username=request.data['id'], password=request.data['password'])
+
+#     user.save()
+
+#     token = Token.objects.create(user=user)
+#     return Response({"Token": token.key})
+
+@csrf_exempt
+@api_view(['POST'])
+def logind(request):
+    user = authenticate(username=request.data['id'], password=request.data['password'])
+    if user is not None:
+        token = Token.objects.get(user=user)
+        return Response({"Token": token.key})
+    else:
+        return Response(status=401)
