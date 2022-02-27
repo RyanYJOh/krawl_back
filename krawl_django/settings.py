@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     'votes.apps.VotesConfig',
 
+    'rest_framework',
     # 'cloudinary_storage',
     # 'cloudinary',
 
