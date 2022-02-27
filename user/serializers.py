@@ -1,5 +1,9 @@
 from rest_framework import serializers
-from .models import UserPoint_History, UserPoint_Master, UserProfile_Master
+from .models import UserPoint_History, UserPoint_Master, UserProfile_Master, Account
+
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ['id', 'email', 'password']
 
 class UserProfileM_Serializer(serializers.ModelSerializer):
     class Meta:

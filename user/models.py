@@ -2,6 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from votes.models import Points_Master
 
+class Account(models.Model):
+    email = models.EmailField(max_length=100, unique=True)
+    password = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 class UserProfile_Master(models.Model):
     user_id = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_profile', null=False)
     nickname = models.CharField(max_length=10, blank=False)
