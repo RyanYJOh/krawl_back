@@ -51,11 +51,18 @@ def post(request):
         this_point = Points_Master.objects.get(id=7)
 
         # UserPoint_M에서 -2점 차감
-        this_userPointM = UserPoint_Master.objects.get(user_id=user_id)
-        this_userPointM.total_point = this_userPointM.total_point + this_point.get_point
-        this_userPointM.last_updated_at = today
-        this_userPointM.save()
-
+        try : 
+            this_userPointM = UserPoint_Master.objects.get(user_id=user_id)
+            this_userPointM.total_point = this_userPointM.total_point + this_point.get_point
+            this_userPointM.last_updated_at = today
+            this_userPointM.save()
+        except ObjectDoesNotExist:
+            this_userPointM = UserPoint_Master.objects.create(
+            user_id = user_id,
+            point_id = this_point,
+            total_point = this_point.get_point,
+            last_updated_at = today
+        )
         # UserPoint_H에 기록
         this_userPointH = UserPoint_History.objects.create(
             user_id = user_id,
