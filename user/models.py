@@ -15,8 +15,8 @@ class UserProfile_Master(models.Model):
 class UserPoint_History(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_point_history', null=False)
     point_id = models.ForeignKey(Points_Master, on_delete=models.CASCADE, related_name='user_point_history', null=False)
-    received_at = models.DateField(auto_now_add=True)
-    amount_point = models.IntegerField(null=False)
+    change_date = models.DateField(auto_now_add=True)
+    change_point = models.IntegerField(null=False)
 
 class UserPoint_Master(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_point', null=False)

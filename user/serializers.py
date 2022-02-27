@@ -1,13 +1,14 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import UserPoint_History, UserPoint_Master, UserProfile_Master, Account
+from .models import UserPoint_History, UserPoint_Master, UserProfile_Master
+from rest_framework.serializers import ReadOnlyField
 
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ['id', 'email', 'password']
 
 class UserSerializer(serializers.ModelSerializer):
-    
+    # username = ReadOnlyField(source='author.username')
     class Meta:
         model = User
         fields = ('username', 'email', 'password')

@@ -10,6 +10,12 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
 
+## 회원가입 시 token 생성을 위한 임포트
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
+
 @api_view(['GET'])
 def apiOverview(request):
     api_urls = {
@@ -34,8 +40,7 @@ def register(request): # 회원가입 (POST)
     serializer = UserSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
-        print(serializer)
-        print('##########', serializer.data)
+        
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
 
@@ -94,3 +99,9 @@ def logind(request):
         return Response({"Token": token.key})
     else:
         return Response(status=401)
+
+## 회원가입 시 token 생성
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
