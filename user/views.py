@@ -30,9 +30,12 @@ def account_list(request): ## 게정 전체 조회(GET)
 @permission_classes((AllowAny,))
 def register(request): # 회원가입 (POST)
     data = JSONParser().parse(request)
+
     serializer = UserSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
+        print(serializer)
+        print('##########', serializer.data)
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
 
@@ -62,36 +65,25 @@ def account(request, pk): ## 특정계정 조회(GET), 수정(PUT), 삭제(DELET
 @api_view(['POST'])
 @permission_classes((AllowAny,))
 def login(request):
-
+    username = request.data.get('username')
     email = request.data.get('email')
     password = request.data.get('password')
 
-    if email is None or password is None:
+    if email is None or password is None or username is None:
         return Response({'error': 'Please provide both username and password'},
                         status=400)
 
 	# 여기서 authenticate로 유저 validate
-    user = authenticate(email=email, password=password)
+    user = authenticate(username=username, email=email, password=password)
     
     if not user:
         return Response({'error': 'Invalid credentials'}, status=404)
 
 	# user 로 토큰 발행
-    # token, _ = Token.objects.get_or_create(user=user)
-    token = Token.objects.get_or_create(user=user)
+    token, _ = Token.objects.get_or_create(user=user)
     return Response({'token': token.key}, status=200)
 
 ## logout은?
-
-
-# @api_view(['POST'])
-# def register(request):
-#     user = User.objects.create_user(username=request.data['id'], password=request.data['password'])
-
-#     user.save()
-
-#     token = Token.objects.create(user=user)
-#     return Response({"Token": token.key})
 
 @csrf_exempt
 @api_view(['POST'])
