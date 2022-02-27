@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from votes.models import Competitions_Master
-from user.models import UserPoint_Master, UserPoint_History
+from user.models import UserPoint_Master, UserPoint_History, UserProfile_Master
 from votes.models import Points_Master
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -145,5 +145,37 @@ def getDelLike(request, pk):
 def getAllPosts(request):
     all_posts = Contents_Detail.objects.filter(date_check=True).order_by('-created_at')
     serializer = ContentsD_Serializer(all_posts, many=True)
+    
+    this_data = serializer.data
+    # print('ser.data :', serializer.data[0])
+    for i in range(0,len(this_data)):
+        this_user = User.objects.get(id=this_data[i]['user_id'])
+        # nickname, profile_img 추가
+        try : 
+            this_data[i]['current_user'] = {
+                'nickname' : UserProfile_Master.objects.get(user_id=this_user).nickname,
+                'profile_img' : UserProfile_Master.objects.get(user_id=this_user).profile_img.url
+            } 
+        except ObjectDoesNotExist :
+            this_data[i]['current_user'] = {
+                'nickname' : '이름 없음',
+                'profile_img' : 'https://w.namu.la/s/72fb93bd37d73ea4db3895d6117393f4f6eebf55cf1fa2f9dcbd0ec491feac85d1ee7da9a727e723364a475ff63453317b72f0f27c206b1e5cd663b114b320978507cd418d0268f1a187438c71a6887172979b6381b7fb632a36d460571a0ca5'
+            }
+            
+        # total_point 추가
+        try : 
+            total_point = UserPoint_Master.objects.get(user_id=this_user).total_point
+        except :
+            total_point = 0
+        this_data[i]['total_point'] = total_point
+         
+    
+    print(this_data)
+    
+    ## 유저 이름
+    ## 프로필 이미지
+    ## 현재 컴페티션 아이디에서 남은 기간 -> 나중에..
+    ## 랭킹 = [{1: 유저이름, 프로필 이미지, 유저 아이디}, {}, ...]
+    ## 현재 로그인된 유저 = 프로필 사진, 이름, 보유 포인트 // 비로그인일 때 고려해야 함
 
     return Response(serializer.data, status=200)

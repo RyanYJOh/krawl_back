@@ -223,5 +223,5 @@ DATABASES['default'].update(db_from_env)
 
 #######
 
-CORS_ORIGIN_WHITELIST = ['https://krawl-backend.herokuapp.com']
+CORS_ORIGIN_WHITELIST = ['https://krawl-backend.herokuapp.com', 'http://localhost:3000']
 CORS_ALLOW_CREDENTIALS = True

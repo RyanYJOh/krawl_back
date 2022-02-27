@@ -140,7 +140,3 @@ def getPutUserPoint(request, pk):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
-
-
-
-## 로그인 시 유저 프로필, 포인트, 이름 가져오는 API
