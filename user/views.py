@@ -56,23 +56,6 @@ def account(request, pk): ## 특정계정 조회(GET), 수정(PUT), 삭제(DELET
         obj.delete()
         return HttpResponse(status=204)
 
-
-# @csrf_exempt
-# @api_view(['POST'])
-# def login(request):
-#     if request.method == 'POST':
-#         data = JSONParser().parse(request)
-#         search_email = data['email']
-#         obj = Account.objects.get(email=search_email)
-
-#         if data['password'] == obj.password:
-#             return HttpResponse(status=200)
-#         else:
-#             return HttpResponse(status=400)
-
-
-## logout은?
-
 @api_view(['POST'])
 @permission_classes((AllowAny,))
 def login(request):
@@ -94,3 +77,5 @@ def login(request):
     token, _ = Token.objects.get_or_create(user=user)
     
     return Response({'token': token.key}, status=200)
+
+## logout은?
