@@ -108,12 +108,12 @@ def postLike(request):
             return Response(serializer.data, status=200)
     
 
-@api_view(['DELETE'])
+@api_view(['GET', 'DELETE'])
 @permission_classes((AllowAny,))
 def getDelLike(request, pk):
     if request.method == 'GET':
-        this_like = Likes_Master.objects.get(id=pk)
-        serializer = LikesM_Serializer(
+        this_like = Likes_History.objects.get(id=pk)
+        serializer = LikesH_Serializer(
             this_like,
             )
         return Response(serializer.data, status=200)
