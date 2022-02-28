@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
+from contents.models import Contents_Detail
 from user.models import UserPoint_History, UserPoint_Master, UserProfile_Master
 from votes.models import Points_Master
 from .serializers import UserPointM_Serializer, UserSerializer
@@ -189,3 +190,43 @@ def navbar(request):
     json.dumps(loggedIn)
         
     return Response(loggedIn, status=200)
+
+@api_view(['GET'])
+@permission_classes((AllowAny,))
+def profile(request, pk):
+    profile = {
+        'user' : {},
+        'content' : []
+    }
+    
+    this_user = User.objects.get(id=pk)
+    
+    # profile['user'] 부분
+    this_userProfile = UserProfile_Master.objects.get(user_id=this_user)
+    this_user_nickname = this_userProfile.nickname
+    this_user_profileImg = this_userProfile.profile_img.url
+    this_user_point = UserPoint_Master.objects.get(user_id=this_user).total_point
+    
+    profile['user']['nickname'] = this_user_nickname
+    profile['user']['profile_img'] = this_user_profileImg
+    profile['user']['point'] = this_user_point
+
+    # profile['content'] 부분
+    this_userContent = Contents_Detail.objects.filter(user_id=this_user, date_check=True).order_by('-created_at').values()
+    print(this_userContent)
+    for i in range(0, len(this_userContent)):
+        profile_content = {}
+
+        url = this_userContent[i]['url']
+        created_at = this_userContent[i]['created_at']
+        opinion = this_userContent[i]['opinion']
+        
+        profile_content['url'] = url
+        profile_content['created_at'] = created_at.strftime('%Y-%m-%d')
+        profile_content['opinion'] = opinion
+        
+        profile['content'].append(profile_content)
+    
+    json.dumps(profile)
+        
+    return Response(profile, status=200)
