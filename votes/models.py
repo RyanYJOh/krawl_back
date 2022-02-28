@@ -6,7 +6,7 @@ class Points_Master(models.Model):
     get_point = models.IntegerField(null=False)
 
     def __str__(self):
-        return self.point_name + ' : ' + self.get_point
+        return self.point_name + ' : ' + str(self.get_point)
 
 class Competitions_Master(models.Model):
     point_id = models.ForeignKey(Points_Master, on_delete=models.CASCADE, related_name='competitions', null=False)
