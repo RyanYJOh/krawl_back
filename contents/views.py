@@ -2,6 +2,7 @@ from http.client import HTTPResponse
 from django.shortcuts import render
 from rest_framework.response import Response
 from django.contrib.auth.models import User
+from user.serializers import UserPointM_Serializer
 from votes.models import Competitions_Master
 from user.models import UserPoint_Master, UserPoint_History, UserProfile_Master
 from votes.models import Points_Master
@@ -87,6 +88,8 @@ def postLike(request):
     if request.method == 'GET':
         return HTTPResponse(status=200)
     elif request.method == 'POST':
+        ## 토큰 인증
+        
         ## Like
         posted = request.data
 
@@ -147,36 +150,36 @@ def getAllPosts(request):
     serializer = ContentsD_Serializer(all_posts, many=True)
     
     this_data = serializer.data
-    # print('ser.data :', serializer.data[0])
-    # for i in range(0,len(this_data)):
-    #     this_user = User.objects.get(id=this_data[i]['user_id'])
-    #     # nickname, profile_img 추가
-    #     try : 
-    #         this_userprofile = UserProfile_Master.objects.get(user_id=this_user)
-    #         nickname =  this_userprofile.nickname
-    #         profile_img =  this_userprofile.profile_img.url
-    #     except ObjectDoesNotExist :
-    #         nickname = '이름 없음'
-    #         profile_img = 'https://w.namu.la/s/72fb93bd37d73ea4db3895d6117393f4f6eebf55cf1fa2f9dcbd0ec491feac85d1ee7da9a727e723364a475ff63453317b72f0f27c206b1e5cd663b114b320978507cd418d0268f1a187438c71a6887172979b6381b7fb632a36d460571a0ca5'
-    #     this_data[i]['current_user'] = {
-    #         'nickname' : nickname,
-    #         'profile_img' : profile_img
-    #     }
+    print('ser.data :', serializer.data[0])
+    for i in range(0,len(this_data)):
+        this_user = User.objects.get(id=this_data[i]['user_id'])
+        # nickname, profile_img 추가
+        this_userprofile = UserProfile_Master.objects.get(user_id=this_user)
+        nickname =  this_userprofile.nickname
+        profile_img =  this_userprofile.profile_img.url
 
-    #     # total_point 추가
-    #     try : 
-    #         total_point = UserPoint_Master.objects.get(user_id=this_user).total_point
-    #     except :
-    #         total_point = 0
-    #     this_data[i]['current_user']['total_point'] = total_point
-         
-    
-    # print(this_data)
-    
-    ## 유저 이름
-    ## 프로필 이미지
+        # try : 
+        #     this_userprofile = UserProfile_Master.objects.get(user_id=this_user)
+        #     nickname =  this_userprofile.nickname
+        #     profile_img =  this_userprofile.profile_img.url
+        # except ObjectDoesNotExist :
+        #     nickname = '이름 없음'
+        #     profile_img = 'https://w.namu.la/s/72fb93bd37d73ea4db3895d6117393f4f6eebf55cf1fa2f9dcbd0ec491feac85d1ee7da9a727e723364a475ff63453317b72f0f27c206b1e5cd663b114b320978507cd418d0268f1a187438c71a6887172979b6381b7fb632a36d460571a0ca5'
+        
+        this_data[i]['current_user'] = {
+            'nickname' : nickname,
+            'profile_img' : profile_img
+        }
+
+        # total_point 추가
+        try : 
+            total_point = UserPoint_Master.objects.get(user_id=this_user).total_point
+        except :
+            total_point = 0
+        
+        this_data[i]['current_user']['total_point'] = total_point
+        
     ## 현재 컴페티션 아이디에서 남은 기간 -> 나중에..
-    ## 랭킹 = [{1: 유저이름, 프로필 이미지, 유저 아이디}, {}, ...]
-    ## 현재 로그인된 유저 = 프로필 사진, 이름, 보유 포인트 // 비로그인일 때 고려해야 함
 
     return Response(serializer.data, status=200)
+
