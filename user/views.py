@@ -159,7 +159,7 @@ def getRankings(request):
         ranker = {}
         user_id = ranking[i]['user_id']
         print('user id : ', user_id)
-        this_user = UserProfile_Master.objects.get(id=user_id)
+        this_user = UserProfile_Master.objects.get(user_id=User.objects.get(id=user_id))
         this_userPoint = UserPoint_Master.objects.get(user_id=user_id).total_point
         ranker['nickname'] = this_user.nickname
         ranker['profile_img'] = this_user.profile_img.url
@@ -167,9 +167,12 @@ def getRankings(request):
         ranker['user_point'] = this_userPoint
         ranker_wrapper.append(ranker)
     print(ranker)
+
     json.dumps(ranker)
+    json__ranking_wrapper = json.dumps(ranker_wrapper)
         
     return Response(ranker_wrapper, status=200)
+    # return HttpResponse(json__ranking_wrapper, status=200)
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
@@ -227,6 +230,7 @@ def profile(request, pk):
         
         profile['content'].append(profile_content)
     
-    json.dumps(profile)
+    json__profile = json.dumps(profile)
         
     return Response(profile, status=200)
+    # return HttpResponse(json__profile, status=200)
