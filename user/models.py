@@ -31,4 +31,4 @@ class UserPoint_Master(models.Model):
     last_updated_at = models.DateField(auto_now_add=False)
 
     def __str__(self):
-        return self.user_id.username + ' : ' + self.total_point
+        return self.user_id.username + ' : ' + str(self.total_point)
