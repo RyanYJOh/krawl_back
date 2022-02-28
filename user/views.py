@@ -177,7 +177,7 @@ def navbar(request):
     loggedIn = {}
 
     this_user = User.objects.get(id=request.auth.user.id)
-    print(this_user)
+    
     this_userProfile = UserProfile_Master.objects.get(user_id=this_user)
     this_user_nickname = this_userProfile.nickname
     this_user_profileImg = this_userProfile.profile_img.url
@@ -188,8 +188,8 @@ def navbar(request):
     loggedIn['point'] = this_user_point
     
     json.dumps(loggedIn)
-        
-    return Response(loggedIn, status=200)
+    
+    return Response(loggedIn, content_type="application/json", status=200)
 
 @api_view(['GET'])
 @permission_classes((AllowAny,))
@@ -213,7 +213,6 @@ def profile(request, pk):
 
     # profile['content'] 부분
     this_userContent = Contents_Detail.objects.filter(user_id=this_user, date_check=True).order_by('-created_at').values()
-    print(this_userContent)
     for i in range(0, len(this_userContent)):
         profile_content = {}
 
