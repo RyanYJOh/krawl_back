@@ -7,7 +7,7 @@ from votes.models import Competitions_Master
 from user.models import UserPoint_Master, UserPoint_History, UserProfile_Master
 from votes.models import Points_Master
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from contents.serializers import ContentsD_Serializer, LikesH_Serializer, LikesM_Serializer
 from .models import Contents_Detail, WinnerContents_Detail, Likes_History, Likes_Master
 from django.utils import timezone
@@ -24,13 +24,12 @@ string__today = str(now).split()[0]
 today = datetime.strptime(string__today, '%Y-%m-%d').date()
 
 @api_view(['POST'])
-@permission_classes((AllowAny,))
+@permission_classes((IsAuthenticated,))
 def post(request):
     if request.method == 'GET':
         return HTTPResponse(status=200)
     elif request.method == 'POST':
-        ## 토큰 확인
-        print(request.auth)
+        ## 포스트 진행
         posted = request.data
 
         user_id = User.objects.get(id=posted['user_id'])
@@ -83,13 +82,11 @@ def winnerContent(request):
     return
 
 @api_view(['POST'])
-@permission_classes((AllowAny,))
+@permission_classes((IsAuthenticated,))
 def postLike(request):
     if request.method == 'GET':
         return HTTPResponse(status=200)
     elif request.method == 'POST':
-        ## 토큰 인증
-        
         ## Like
         posted = request.data
 
@@ -121,7 +118,7 @@ def postLike(request):
     
 
 @api_view(['GET', 'DELETE'])
-@permission_classes((AllowAny,))
+@permission_classes((IsAuthenticated,))
 def getDelLike(request, pk):
     if request.method == 'GET':
         this_like = Likes_History.objects.get(id=pk)
@@ -150,7 +147,6 @@ def getAllPosts(request):
     serializer = ContentsD_Serializer(all_posts, many=True)
     
     this_data = serializer.data
-    print('ser.data :', serializer.data[0])
     for i in range(0,len(this_data)):
         this_user = User.objects.get(id=this_data[i]['user_id'])
         # nickname, profile_img 추가

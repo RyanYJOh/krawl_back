@@ -8,6 +8,7 @@ urlpatterns = [
     path('register', views.register),
     path('<int:pk>', views.account),
     path('rankings', views.getRankings),
+    path('navbar', views.navbar),
     # path('login', views.login),
     path('auth', include('rest_framework.urls', namespace='rest_framework'))
 ]

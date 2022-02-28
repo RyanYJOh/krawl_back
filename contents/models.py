@@ -15,7 +15,7 @@ class Contents_Detail(models.Model):
     del_yn = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.user_id.username + ' : ' + self.created_at + ' : ' + self.date_check
+        return self.user_id.username + ' : ' + str(self.created_at) + ' : ' + str(self.date_check)
 
 class WinnerContents_Detail(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner_content', null=False)

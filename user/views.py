@@ -11,7 +11,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.utils import timezone
 from datetime import datetime, date
 import json
@@ -84,7 +84,7 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 @csrf_exempt
 @api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes((AllowAny,))
+@permission_classes((IsAuthenticated,))
 def account(request, pk): ## 특정계정 조회(GET), 수정(PUT), 삭제(DELETE)
 
     obj = User.objects.get(pk=pk)
@@ -171,27 +171,21 @@ def getRankings(request):
     return Response(ranker_wrapper, status=200)
 
 @api_view(['GET'])
-@permission_classes((AllowAny,))
-def getLoggedIn(request):
-    ## 토큰이 있는지 먼저 보고
-    # 있으면
-    # 토큰으로 this_user 가져옴. 이 this_user의 id로 UserProfile_Master에서 이름과 프사,
-    # UserPoint_Master에서 total_point 가져오면 됨
-    # 없으면
-    ranking = UserPoint_Master.objects.all().order_by('total_point')[:5].values('user_id')
-    ranker_wrapper = []
-    for i in range(0, len(ranking)):
-        ranker = {}
-        user_id = ranking[i]['user_id']
-        print('user id : ', user_id)
-        this_user = UserProfile_Master.objects.get(id=user_id)
-        this_userPoint = UserPoint_Master.objects.get(user_id=user_id).total_point
-        ranker['nickname'] = this_user.nickname
-        ranker['profile_img'] = this_user.profile_img.url
-        ranker['user_id'] = user_id
-        ranker['user_point'] = this_userPoint
-        ranker_wrapper.append(ranker)
-    print(ranker)
-    json.dumps(ranker)
+@permission_classes((IsAuthenticated,))
+def navbar(request):
+    loggedIn = {}
+
+    this_user = User.objects.get(id=request.auth.user.id)
+    print(this_user)
+    this_userProfile = UserProfile_Master.objects.get(user_id=this_user)
+    this_user_nickname = this_userProfile.nickname
+    this_user_profileImg = this_userProfile.profile_img.url
+    this_user_point = UserPoint_Master.objects.get(user_id=this_user).total_point
+    
+    loggedIn['nickname'] = this_user_nickname
+    loggedIn['profile_img'] = this_user_profileImg
+    loggedIn['point'] = this_user_point
+    
+    json.dumps(loggedIn)
         
-    return Response(ranker_wrapper, status=200)
+    return Response(loggedIn, status=200)
