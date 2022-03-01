@@ -171,8 +171,8 @@ def getRankings(request):
     json.dumps(ranker)
     json__ranking_wrapper = json.dumps(ranker_wrapper)
         
-    return Response(ranker_wrapper, status=200)
-    # return HttpResponse(json__ranking_wrapper, status=200)
+    # return Response(ranker_wrapper, status=200)
+    return HttpResponse(json__ranking_wrapper, status=200)
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
@@ -191,9 +191,8 @@ def navbar(request):
     loggedIn['point'] = this_user_point
     
     json__loggedIn = json.dumps(loggedIn)
-    # return Response(loggedIn, content_type="application/json", status=200)
+    
     return HttpResponse(json__loggedIn, status=200)
-    # return Response(json.dumps(loggedIn), content_type="application/json", status=200)
 
 @api_view(['GET'])
 @permission_classes((AllowAny,))
@@ -232,5 +231,5 @@ def profile(request, pk):
     
     json__profile = json.dumps(profile)
         
-    return Response(profile, status=200)
-    # return HttpResponse(json__profile, status=200)
+    # return Response(profile, status=200)
+    return HttpResponse(json__profile, status=200)

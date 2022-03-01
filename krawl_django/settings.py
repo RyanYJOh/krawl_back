@@ -199,12 +199,12 @@ db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
 
 ## Cloudinary
-# CLOUDINARY_STORAGE = {
-#     'CLOUD_NAME' : '',
-#     'API_KEY' : get_secret("CLOUDINARY_API_KEY"),
-#     'API_SECRET' : get_secret("CLOUDINARY_API_SECRET")
-# }
-# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME' : 'hp36q14ss',
+    'API_KEY' : config("CLOUDINARY_API_KEY"),
+    'API_SECRET' : config("CLOUDINARY_API_SECRET")
+}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 ## Reset pw
 
