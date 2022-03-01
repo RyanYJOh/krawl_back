@@ -14,6 +14,6 @@ class Competitions_Master(models.Model):
     ends_at = models.DateField(auto_now_add=False)
 
     def __str__(self):
-        return self.point_id.point_name + ' : ' + self.starts_at + '~' + self.ends_at
+        return self.point_id.point_name + ' : ' + str(self.starts_at) + '~' + str(self.ends_at)
 
 
