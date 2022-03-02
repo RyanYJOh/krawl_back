@@ -1,6 +1,7 @@
 from http.client import HTTPResponse
 from django.shortcuts import render
 from rest_framework.response import Response
+from django.http.response import JsonResponse
 from django.contrib.auth.models import User
 from user.serializers import UserPointM_Serializer
 from votes.models import Competitions_Master
@@ -32,7 +33,8 @@ def post(request):
         ## 포스트 진행
         posted = request.data
 
-        user_id = User.objects.get(id=posted['user_id'])
+        user_id = request.auth.user
+        # user_id = User.objects.get(id=posted['user_id'])
         competition_id = Competitions_Master.objects.get(id=posted['competition_id'])
 
         new_content = Contents_Detail.objects.create(
@@ -128,17 +130,23 @@ def getDelLike(request, pk):
         return Response(serializer.data, status=200)
 
     elif request.method == 'DELETE':
-        ## Likes_Master에서는 지움
         this_content = Likes_History.objects.get(id=pk).content_id.id
-        
         this_likeM = Likes_Master.objects.get(content_id=this_content)
-        this_likeM.count_like = this_likeM.count_like - 1
-        this_likeM.save()
-        
-        ## Likes_History에서는 del_yn만 변경
-        this_likeH = Likes_History.objects.get(id=pk)
-        this_likeH.del_yn = True
-        this_likeH.save()
+
+        ## 현재 request.auth.user가 이 포스트의 주인인가?
+        if this_likeM.user_id == request.auth.user:
+            ## Likes_Master에서는 지움
+            this_likeM.count_like = this_likeM.count_like - 1
+            this_likeM.save()
+            
+            ## Likes_History에서는 del_yn만 변경
+            this_likeH = Likes_History.objects.get(id=pk)
+            this_likeH.del_yn = True
+            this_likeH.save()
+
+            return JsonResponse({'message' : '사실 안좋아요지롱!'})
+        else:
+            return JsonResponse({'message' : '내 좋아요만 지울 수 있음요'})
 
 @api_view(['GET'])
 @permission_classes((AllowAny,))
