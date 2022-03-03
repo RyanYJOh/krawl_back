@@ -14,6 +14,9 @@ from .models import Contents_Detail, WinnerContents_Detail, Likes_History, Likes
 from django.utils import timezone
 from datetime import datetime, date
 from django.core.exceptions import ObjectDoesNotExist
+from .pagination import PostPageNumberPagination
+from rest_framework.pagination import PageNumberPagination
+from django.core.paginator import Paginator
 
 # json parsing을 위한 임포트
 import io, json
@@ -152,8 +155,12 @@ def getDelLike(request, pk):
 @permission_classes((AllowAny,))
 def getAllPosts(request):
     all_posts = Contents_Detail.objects.filter(date_check=True).order_by('-created_at')
-    serializer = ContentsD_Serializer(all_posts, many=True)
-    
+    paginator = PageNumberPagination()
+    paginator.page_size = 3
+    result_page = paginator.paginate_queryset(all_posts, request)
+
+    serializer = ContentsD_Serializer(result_page, many=True)
+
     this_data = serializer.data
     for i in range(0,len(this_data)):
         this_user = User.objects.get(id=this_data[i]['user_id'])
@@ -161,14 +168,6 @@ def getAllPosts(request):
         this_userprofile = UserProfile_Master.objects.get(user_id=this_user)
         nickname =  this_userprofile.nickname
         profile_img =  this_userprofile.profile_img.url
-
-        # try : 
-        #     this_userprofile = UserProfile_Master.objects.get(user_id=this_user)
-        #     nickname =  this_userprofile.nickname
-        #     profile_img =  this_userprofile.profile_img.url
-        # except ObjectDoesNotExist :
-        #     nickname = '이름 없음'
-        #     profile_img = 'https://w.namu.la/s/72fb93bd37d73ea4db3895d6117393f4f6eebf55cf1fa2f9dcbd0ec491feac85d1ee7da9a727e723364a475ff63453317b72f0f27c206b1e5cd663b114b320978507cd418d0268f1a187438c71a6887172979b6381b7fb632a36d460571a0ca5'
         
         this_data[i]['current_user'] = {
             'nickname' : nickname,
@@ -185,5 +184,7 @@ def getAllPosts(request):
         
     ## 현재 컴페티션 아이디에서 남은 기간 -> 나중에..
 
-    return Response(serializer.data, status=200)
+    # return Response(serializer.data, status=200)
+    return paginator.get_paginated_response(serializer.data)
+
 
