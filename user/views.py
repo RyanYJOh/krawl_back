@@ -125,7 +125,17 @@ def login(request):
 
 	# user 로 토큰 발행
     token, _ = Token.objects.get_or_create(user=user)
-    return Response({'token': token.key}, status=200)
+
+    user_profile = UserProfile_Master.objects.get(user_id=user)
+
+    result = {
+        'token': token.key,
+        'user_id' : user.id,
+        'profile_img' : user_profile.profile_img.url,
+        'nickname' : user_profile.nickname
+    }
+    print('result = ', result)
+    return Response(result, status=200)
 
 ## logout은?
 
