@@ -127,12 +127,14 @@ def login(request):
     token, _ = Token.objects.get_or_create(user=user)
 
     user_profile = UserProfile_Master.objects.get(user_id=user)
+    user_point = UserPoint_Master.objects.get(user_id=user).total_point
 
     result = {
         'token': token.key,
         'user_id' : user.id,
         'profile_img' : user_profile.profile_img.url,
-        'nickname' : user_profile.nickname
+        'nickname' : user_profile.nickname,
+        'total_point' : user_point,
     }
     print('result = ', result)
     return Response(result, status=200)
