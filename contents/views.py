@@ -156,7 +156,7 @@ def getDelLike(request, pk):
 def getAllPosts(request):
     all_posts = Contents_Detail.objects.filter(date_check=True).order_by('-created_at')
     paginator = PageNumberPagination()
-    paginator.page_size = 3
+    paginator.page_size = 10
     result_page = paginator.paginate_queryset(all_posts, request)
 
     serializer = ContentsD_Serializer(result_page, many=True)
