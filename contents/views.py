@@ -121,7 +121,6 @@ def postLike(request):
         if serializer.is_valid():    
             return Response(serializer.data, status=200)
     
-
 @api_view(['GET', 'DELETE'])
 @permission_classes((IsAuthenticated,))
 def getDelLike(request, pk):
@@ -186,5 +185,28 @@ def getAllPosts(request):
 
     # return Response(serializer.data, status=200)
     return paginator.get_paginated_response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes((AllowAny,))
+def getThisPost(request, pk):
+    this_post = Contents_Detail.objects.get(id=pk)
+    serializer = ContentsD_Serializer(this_post)
+    this_data = serializer.data
+    
+    ## Likes와 댓글
+    this_post_likes = Likes_Master.objects.get(content_id=this_post)
+    # this_post_comments = 
+
+    this_data['likes'] = this_post_likes.count_like
+    
+    ## 그 외 user info
+    author_profile = UserProfile_Master.objects.get(user_id=this_post.user_id)
+    nickname = author_profile.nickname
+    profile_img = author_profile.profile_img.url
+    
+    this_data['nickname'] = nickname
+    this_data['profile_img'] = profile_img
+    
+    return JsonResponse(this_data, status=200)
 
 

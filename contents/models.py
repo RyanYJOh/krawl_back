@@ -40,4 +40,4 @@ class Likes_Master(models.Model):
     count_like = models.IntegerField(null=False)
 
     def __str__(self):
-        return self.content_id + ' : ' + self.count_like
+        return str(self.content_id) + ' : ' + str(self.count_like)
