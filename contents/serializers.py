@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Contents_Detail, WinnerContents_Detail, Likes_History, Likes_Master
+from .models import Comments_Master, Contents_Detail, WinnerContents_Detail, Likes_History, Likes_Master
 
 class ContentsD_Serializer(serializers.ModelSerializer):
     
@@ -21,6 +21,11 @@ class LikesM_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Likes_Master
         fields = ['id', 'content_id', 'count_like']
+
+class CommentsM_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comments_Master
+        fields = ['id', 'user_id', 'content_id', 'body', 'del_yn', 'created_at']
 
 '''
 bookcake에서 가져온 tips

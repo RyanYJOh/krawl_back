@@ -1,4 +1,5 @@
 from http.client import ImproperConnectionState
+from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -49,10 +50,17 @@ def register(request): # 회원가입 (POST)
     data = JSONParser().parse(request)
 
     serializer = UserSerializer(data=data)
+    
 
+    # if serializer.is_valid():
     if serializer.is_valid():
         serializer.save()
-        this_user = User.objects.get(username=serializer.data['username'])
+
+        ## status값 넘겨주기
+        this_data = serializer.data
+        this_data['rescode'] = 1
+
+        this_user = User.objects.get(username=this_data['username'])
 
         ## UserProfile_Master 생성
         this_userProfileM = UserProfile_Master.objects.create(
@@ -74,7 +82,8 @@ def register(request): # 회원가입 (POST)
             change_point = Points_Master.objects.get(id=6).get_point
         )
         
-        return Response(serializer.data, status=201)
+        # return Response(serializer.data, status=201)
+        return JsonResponse(this_data, status=201)
     return Response(serializer.errors, status=400)
 
 ## 회원가입 시 token 생성

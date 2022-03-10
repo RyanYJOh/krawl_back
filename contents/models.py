@@ -41,3 +41,13 @@ class Likes_Master(models.Model):
 
     def __str__(self):
         return str(self.content_id) + ' : ' + str(self.count_like)
+
+class Comments_Master(models.Model):
+    content_id = models.ForeignKey(Contents_Detail, on_delete=models.CASCADE, related_name='comments_master', null=False)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments_master', null=False)
+    body = models.TextField(blank=False)
+    created_at = models.DateField(auto_now_add=True)
+    del_yn = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.content_id) + ' : ' + str(self.body)
