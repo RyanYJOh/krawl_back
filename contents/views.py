@@ -9,8 +9,8 @@ from user.models import UserPoint_Master, UserPoint_History, UserProfile_Master
 from votes.models import Points_Master
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from contents.serializers import ContentsD_Serializer, LikesH_Serializer, LikesM_Serializer
-from .models import Contents_Detail, WinnerContents_Detail, Likes_History, Likes_Master
+from contents.serializers import ContentsD_Serializer, LikesH_Serializer, LikesM_Serializer, CommentsM_Serializer
+from .models import Comments_Master, Contents_Detail, WinnerContents_Detail, Likes_History, Likes_Master
 from django.utils import timezone
 from datetime import datetime, date
 from django.core.exceptions import ObjectDoesNotExist
@@ -209,4 +209,60 @@ def getThisPost(request, pk):
     
     return JsonResponse(this_data, status=200)
 
+@api_view(['POST'])
+@permission_classes((IsAuthenticated,))
+def postComment(request):
+    if request.method == 'GET':
+        return HTTPResponse(status=200)
+    elif request.method == 'POST':
+        posted = request.data
 
+        # user_id = User.objects.get(id=posted['user_id'])
+        user_id = request.auth.user
+        content_id = Contents_Detail.objects.get(id=posted['content_id'])
+        
+        new_comment = Comments_Master.objects.create(
+            user_id = user_id,
+            content_id = content_id,
+            body = posted['body']
+        )
+        new_comment.save()
+        serializer = CommentsM_Serializer(data=request.data)
+
+        if serializer.is_valid():    
+            return Response(serializer.data, status=200)
+    
+@api_view(['GET'])
+@permission_classes((AllowAny,))
+def getComments(request, pk):
+    this_content = Contents_Detail.objects.get(id=pk)
+    this_comment = Comments_Master.objects.filter(content_id=this_content, del_yn=False).order_by('-created_at')
+    serializer = CommentsM_Serializer(this_comment, many=True)
+    
+    this_data = serializer.data
+
+    for i in range(0, len(this_data)):
+        comment_author = User.objects.get(id=this_data[i]['user_id'])
+        this_userprofile = UserProfile_Master.objects.get(user_id=comment_author)
+
+        nickname =  this_userprofile.nickname
+        profile_img =  this_userprofile.profile_img.url
+        
+        this_data[i]['current_user'] = {
+            'nickname' : nickname,
+            'profile_img' : profile_img
+        }
+
+    return Response(serializer.data, status=200)
+
+@api_view(['DELETE'])
+@permission_classes((IsAuthenticated,))
+def delComment(request, pk):
+    this_comment = Comments_Master.objects.get(id=pk)
+    if this_comment.user_id == request.auth.user:
+        this_comment.del_yn = True
+        this_comment.save()
+    
+        return JsonResponse({'message' : '댓글 정상적으로 삭제 됨'})
+    else:
+        return JsonResponse({'message' : '남의 댓글을 왜 지우냐 ㅡㅡ'})
