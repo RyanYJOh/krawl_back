@@ -266,3 +266,17 @@ def delComment(request, pk):
         return JsonResponse({'message' : '댓글 정상적으로 삭제 됨'})
     else:
         return JsonResponse({'message' : '남의 댓글을 왜 지우냐 ㅡㅡ'})
+
+@api_view(['GET'])
+@permission_classes((AllowAny,))
+def getPopular(request):
+    popular_likes = Likes_Master.objects.order_by('-count_like')[:5].values('content_id')
+
+    list__popular_contents_id = []
+    for i in range(0, len(popular_likes)):
+        list__popular_contents_id.append(popular_likes[i]['content_id'])
+
+    popular_contents = Contents_Detail.objects.filter(date_check=True, id__in=list__popular_contents_id)
+    serializer = ContentsD_Serializer(popular_contents, many=True)
+
+    return Response(serializer.data, status=200)

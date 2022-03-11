@@ -7,6 +7,7 @@ urlpatterns = [
     path('', views.getAllPosts),
     path('post-content', views.post),
     path('get-post/<int:pk>', views.getThisPost),
+    path('get-popular-posts/', views.getPopular),
     path('likes', views.postLike), 
     path('likes/<int:pk>', views.getDelLike),
     path('post-comment/', views.postComment),
