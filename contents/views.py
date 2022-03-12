@@ -194,11 +194,35 @@ def getThisPost(request, pk):
     this_data = serializer.data
     
     ## Likes와 댓글
-    this_post_likes = Likes_Master.objects.get(content_id=this_post)
-    # this_post_comments = 
+    ## Likes
+    try:
+        this_post_likes = Likes_Master.objects.get(content_id=this_post)
+        this_data['likes'] = this_post_likes.count_like
 
-    this_data['likes'] = this_post_likes.count_like
+    except ObjectDoesNotExist:
+        this_data['likes'] = 0
     
+    ## Comments
+    try:
+        this_post_comments = Comments_Master.objects.filter(content_id=this_post, del_yn=False).values().order_by('-created_at')
+        list__this_post_comments = list(this_post_comments)
+        
+        for i in range(0, len(list__this_post_comments)):
+            comment_author = User.objects.get(id=list__this_post_comments[i]['user_id_id'])
+            this_userprofile = UserProfile_Master.objects.get(user_id=comment_author)
+
+            nickname =  this_userprofile.nickname
+            profile_img =  this_userprofile.profile_img.url
+            
+            list__this_post_comments[i]['current_user'] = {
+                'nickname' : nickname,
+                'profile_img' : profile_img
+            }
+    except ObjectDoesNotExist:
+        list__this_post_comments = []  
+    
+    this_data['comments'] = list__this_post_comments
+    print('this_data : ', this_data)
     ## 그 외 user info
     author_profile = UserProfile_Master.objects.get(user_id=this_post.user_id)
     nickname = author_profile.nickname
