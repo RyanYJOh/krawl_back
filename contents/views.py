@@ -270,7 +270,7 @@ def delComment(request, pk):
 @api_view(['GET'])
 @permission_classes((AllowAny,))
 def getPopular(request):
-    popular_likes = Likes_Master.objects.order_by('-count_like')[:5].values('content_id')
+    popular_likes = Likes_Master.objects.order_by('-count_like')[:10].values('content_id')
 
     list__popular_contents_id = []
     for i in range(0, len(popular_likes)):
