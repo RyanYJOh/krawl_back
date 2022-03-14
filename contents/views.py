@@ -153,7 +153,7 @@ def getDelLike(request, pk):
 @api_view(['GET'])
 @permission_classes((AllowAny,))
 def getAllPosts(request):
-    all_posts = Contents_Detail.objects.filter(date_check=True).order_by('-created_at')
+    all_posts = Contents_Detail.objects.filter(date_check=True, del_yn=False).order_by('-created_at')
     paginator = PageNumberPagination()
     paginator.page_size = 10
     result_page = paginator.paginate_queryset(all_posts, request)
@@ -222,7 +222,7 @@ def getThisPost(request, pk):
         list__this_post_comments = []  
     
     this_data['comments'] = list__this_post_comments
-    print('this_data : ', this_data)
+
     ## 그 외 user info
     author_profile = UserProfile_Master.objects.get(user_id=this_post.user_id)
     nickname = author_profile.nickname
@@ -300,7 +300,7 @@ def getPopular(request):
     for i in range(0, len(popular_likes)):
         list__popular_contents_id.append(popular_likes[i]['content_id'])
 
-    popular_contents = Contents_Detail.objects.filter(date_check=True, id__in=list__popular_contents_id)
+    popular_contents = Contents_Detail.objects.filter(date_check=True, del_yn=False, id__in=list__popular_contents_id)
     serializer = ContentsD_Serializer(popular_contents, many=True)
 
     return Response(serializer.data, status=200)
