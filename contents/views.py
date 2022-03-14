@@ -161,6 +161,7 @@ def getAllPosts(request):
     serializer = ContentsD_Serializer(result_page, many=True)
 
     this_data = serializer.data
+    print('this_data : ', this_data)
     for i in range(0,len(this_data)):
         this_user = User.objects.get(id=this_data[i]['user_id'])
         # nickname, profile_img 추가
@@ -173,17 +174,19 @@ def getAllPosts(request):
             'profile_img' : profile_img
         }
 
-        # total_point 추가
-        try : 
-            total_point = UserPoint_Master.objects.get(user_id=this_user).total_point
-        except :
-            total_point = 0
+        # 좋아요 한 유저 추가
+        likers = Likes_History.objects.filter(content_id=this_data[i]['id'], del_yn=False).values_list('user_id', flat=True)
+        print(list(likers))
+        this_data[i]['likers'] = list(likers)
         
-        this_data[i]['current_user']['total_point'] = total_point
+        # total_point 추가 -> 는 포인트 없애면서 보류
+        # try : 
+        #     total_point = UserPoint_Master.objects.get(user_id=this_user).total_point
+        # except :
+        #     total_point = 0
         
-    ## 현재 컴페티션 아이디에서 남은 기간 -> 나중에..
+        # this_data[i]['current_user']['total_point'] = total_point
 
-    # return Response(serializer.data, status=200)
     return paginator.get_paginated_response(serializer.data)
 
 @api_view(['GET'])
