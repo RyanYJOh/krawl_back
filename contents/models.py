@@ -33,7 +33,7 @@ class Likes_History(models.Model):
     del_yn = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.user_id.username + ' : ' + self.content_id
+        return self.user_id.username + ' liked : ' + str(self.content_id.id) + ' (del_yn=' + str(self.del_yn) + ')'
 
 class Likes_Master(models.Model):
     content_id = models.ForeignKey(Contents_Detail, on_delete=models.CASCADE, related_name='likes_master', null=False)

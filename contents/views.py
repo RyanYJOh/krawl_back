@@ -161,7 +161,7 @@ def getAllPosts(request):
     serializer = ContentsD_Serializer(result_page, many=True)
 
     this_data = serializer.data
-    print('this_data : ', this_data)
+    
     for i in range(0,len(this_data)):
         this_user = User.objects.get(id=this_data[i]['user_id'])
         # nickname, profile_img 추가
@@ -176,7 +176,7 @@ def getAllPosts(request):
 
         # 좋아요 한 유저 추가
         likers = Likes_History.objects.filter(content_id=this_data[i]['id'], del_yn=False).values_list('user_id', flat=True)
-        print(list(likers))
+        
         this_data[i]['likers'] = list(likers)
         
         # total_point 추가 -> 는 포인트 없애면서 보류
@@ -205,6 +205,11 @@ def getThisPost(request, pk):
     except ObjectDoesNotExist:
         this_data['likes'] = 0
     
+    ## Likers
+    likers = Likes_History.objects.filter(content_id=this_data['id'], del_yn=False).values_list('user_id', flat=True)
+        
+    this_data['likers'] = list(likers)
+
     ## Comments
     try:
         this_post_comments = Comments_Master.objects.filter(content_id=this_post, del_yn=False).values().order_by('-created_at')
