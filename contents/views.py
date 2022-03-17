@@ -140,19 +140,20 @@ def getDelLike(request, pk):
         this_likeM = Likes_Master.objects.get(content_id=this_content)
 
         ## 현재 request.auth.user가 이 포스트의 주인인가?
-        if this_likeM.user_id == request.auth.user:
-            ## Likes_Master에서는 지움
-            this_likeM.count_like = this_likeM.count_like - 1
-            this_likeM.save()
-            
-            ## Likes_History에서는 del_yn만 변경
-            this_likeH = Likes_History.objects.get(content_id=this_content)
+        try:
+            ## 이 사람이 여기에 좋아요를 했나?
+            this_likeH = Likes_History.objects.get(user_id=request.auth.user, content_id=this_content, del_yn=False)
             this_likeH.del_yn = True
             this_likeH.save()
 
-            return JsonResponse({'message' : '사실 안좋아요지롱!'})
-        else:
-            return JsonResponse({'message' : '내 좋아요만 지울 수 있음요'})
+            ## Likes_Master에서는 지움
+            this_likeM.count_like = this_likeM.count_like - 1
+            this_likeM.save()
+
+            return JsonResponse({'message' : '사실 안 좋아요!!!!!'})
+        
+        except ObjectDoesNotExist:
+            return JsonResponse({'message' : '왜 남의 좋아요를 지우려고 하냐 ㅡㅡ'})
 
 @api_view(['GET'])
 @permission_classes((AllowAny,))
