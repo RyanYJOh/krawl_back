@@ -105,8 +105,13 @@ def postLike(request):
             ## 그 전에, 이 유저가 이미 like를 했는지 확인
             try:
                 ## 이미 좋아요 했음
-                Likes_History.objects.filter(user_id=user_id, content_id=content_id, del_yn=False)
-                return JsonResponse({'rescode' : 2})
+                this_likeH = Likes_History.objects.filter(user_id=user_id, content_id=content_id, del_yn=False)
+                # filter를 쓰니, 오브젝트가 없어도 쿼리셋을 리턴함 (빈 쿼리셋)
+                if len(this_likeH) != 0:
+                    return JsonResponse({'rescode' : 2})
+                elif len(this_likeH) == 0:
+                    this_likeM.count_like += 1
+                    this_likeM.save()
             ## 좋아요 하지 않았음
             except ObjectDoesNotExist:
                 this_likeM.count_like += 1
