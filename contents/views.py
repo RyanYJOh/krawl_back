@@ -98,8 +98,8 @@ def postLike(request):
         user_id = User.objects.get(id=posted['user_id'])
         content_id = Contents_Detail.objects.get(id=posted['content_id'])
 
-        serializer = LikesM_Serializer(data=request.data) # many=True
-
+        # serializer = LikesM_Serializer(data=request.data) # many=True
+        
         ## Likes_Master 업데이트
         # 그 전에, Likes_Master 오브젝트가 없다면 생성해주기
         try:
@@ -113,13 +113,12 @@ def postLike(request):
             )
 
         ## Likes_History에 추가
-        new_like = Likes_History.objects.create(
+        new_likeH = Likes_History.objects.create(
             user_id = user_id,
             content_id = content_id
         )
 
-        if serializer.is_valid():    
-            return Response(serializer.data, status=200)
+        return JsonResponse({'rescode' : 1})
     
 @api_view(['GET', 'DELETE'])
 @permission_classes((IsAuthenticated,))
