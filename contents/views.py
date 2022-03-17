@@ -99,17 +99,20 @@ def postLike(request):
         content_id = Contents_Detail.objects.get(id=posted['content_id'])
 
         ## Likes_Master 업데이트
-        # 그 전에, Likes_Master 오브젝트가 없다면 생성해주기
         try:
             this_likeM = Likes_Master.objects.get(content_id=content_id)
 
             ## 그 전에, 이 유저가 이미 like를 했는지 확인
             try:
-                liked_yes_no = Likes_History.objects.filter(user_id=user_id, content_id=content_id, del_yn=False)
+                ## 이미 좋아요 했음
+                Likes_History.objects.filter(user_id=user_id, content_id=content_id, del_yn=False)
                 return JsonResponse({'rescode' : 2})
+            ## 좋아요 하지 않았음
             except ObjectDoesNotExist:
                 this_likeM.count_like += 1
                 this_likeM.save()
+
+        ## Likes_Master에 오브젝트가 없다면, 새로 생성해주기
         except ObjectDoesNotExist:
             new_likeM = Likes_Master.objects.create(
                 content_id = content_id,
