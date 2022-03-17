@@ -98,14 +98,18 @@ def postLike(request):
         user_id = User.objects.get(id=posted['user_id'])
         content_id = Contents_Detail.objects.get(id=posted['content_id'])
 
-        # serializer = LikesM_Serializer(data=request.data) # many=True
-        
         ## Likes_Master 업데이트
         # 그 전에, Likes_Master 오브젝트가 없다면 생성해주기
         try:
             this_likeM = Likes_Master.objects.get(content_id=content_id)
-            this_likeM.count_like += 1
-            this_likeM.save()
+
+            ## 그 전에, 이 유저가 이미 like를 했는지 확인
+            try:
+                liked_yes_no = Likes_History.objects.get(user_id=user_id, content_id=content_id, del_yn=False)
+                return JsonResponse({'rescode' : 2})
+            except ObjectDoesNotExist:
+                this_likeM.count_like += 1
+                this_likeM.save()
         except ObjectDoesNotExist:
             new_likeM = Likes_Master.objects.create(
                 content_id = content_id,
