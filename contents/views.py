@@ -105,7 +105,7 @@ def postLike(request):
 
             ## 그 전에, 이 유저가 이미 like를 했는지 확인
             try:
-                liked_yes_no = Likes_History.objects.get(user_id=user_id, content_id=content_id, del_yn=False)
+                liked_yes_no = Likes_History.objects.filter(user_id=user_id, content_id=content_id, del_yn=False)
                 return JsonResponse({'rescode' : 2})
             except ObjectDoesNotExist:
                 this_likeM.count_like += 1
