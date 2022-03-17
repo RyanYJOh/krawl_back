@@ -143,8 +143,7 @@ def getDelLike(request, pk):
         try:
             ## 이 사람이 여기에 좋아요를 했나?
             this_likeH = Likes_History.objects.get(user_id=request.auth.user, content_id=this_content, del_yn=False)
-            this_likeH.del_yn = True
-            this_likeH.save()
+            this_likeH.delete()
 
             ## Likes_Master에서는 지움
             this_likeM.count_like = this_likeM.count_like - 1
