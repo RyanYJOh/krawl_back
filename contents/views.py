@@ -135,7 +135,8 @@ def getDelLike(request, pk):
         return Response(serializer.data, status=200)
 
     elif request.method == 'DELETE':
-        this_content = Likes_History.objects.get(id=pk).content_id.id
+        this_content = Contents_Detail.objects.get(id=pk)
+        
         this_likeM = Likes_Master.objects.get(content_id=this_content)
 
         ## 현재 request.auth.user가 이 포스트의 주인인가?
@@ -145,7 +146,7 @@ def getDelLike(request, pk):
             this_likeM.save()
             
             ## Likes_History에서는 del_yn만 변경
-            this_likeH = Likes_History.objects.get(id=pk)
+            this_likeH = Likes_History.objects.get(content_id=this_content)
             this_likeH.del_yn = True
             this_likeH.save()
 
