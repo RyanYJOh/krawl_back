@@ -10,7 +10,7 @@ class Account(models.Model):
 class UserProfile_Master(models.Model):
     user_id = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_profile', null=False)
     nickname = models.CharField(max_length=10, blank=False, default="초기 이름")
-    profile_img = models.ImageField(null=True, blank=True, upload_to='profile_imgs') # default='default_psa.jpg'
+    profile_img = models.ImageField(null=True, blank=True, upload_to='profile_imgs', default='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcktUwcoOIdHi8a2jA46S0p_tKU2iZ06Wt5Q&usqp=CAU') 
 
     def __str__(self):
         return self.user_id.username + ' : ' + self.nickname
