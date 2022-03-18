@@ -49,10 +49,8 @@ def account_list(request): ## 게정 전체 조회(GET)
 def register(request): # 회원가입 (POST)
     data = JSONParser().parse(request)
 
-    serializer = UserSerializer(data=data)
-    
+    serializer = UserSerializer(data=data)    
 
-    # if serializer.is_valid():
     if serializer.is_valid():
         serializer.save()
 
