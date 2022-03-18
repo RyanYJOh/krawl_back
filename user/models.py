@@ -22,7 +22,7 @@ class UserPoint_History(models.Model):
     change_point = models.IntegerField(null=False)
 
     def __str__(self):
-        return self.user_id.username + ' : ' + self.point_id
+        return self.user_id.username + ' : ' + str(self.point_id)
 
 class UserPoint_Master(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_point', null=False)

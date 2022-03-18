@@ -25,7 +25,7 @@ class WinnerContents_Detail(models.Model):
     awarded_at = models.DateField(auto_now_add=False)
 
     def __str__(self):
-        return self.user_id.username + ' : ' + self.content_id + ' : ' + self.competition_id + ' : ' + self.point_id.point_name
+        return self.user_id.username + ' : ' + str(self.content_id) + ' : ' + str(self.competition_id) + ' : ' + str(self.point_id.point_name)
 
 class Likes_History(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes_history', null=False)
