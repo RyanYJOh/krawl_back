@@ -5,6 +5,7 @@ from django.conf.urls import include
 urlpatterns = [
     # path('api', views.apiOverview),
     path('', views.getAllPosts),
+    path('tag=<str:tag>', views.getPostsFiltered),
     path('post-content', views.post),
     path('get-post/<int:pk>', views.getThisPost),
     path('get-popular-posts', views.getPopular),

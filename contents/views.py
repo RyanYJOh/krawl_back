@@ -190,14 +190,37 @@ def getAllPosts(request):
         likers = Likes_History.objects.filter(content_id=this_data[i]['id'], del_yn=False).values_list('user_id', flat=True)
         
         this_data[i]['likers'] = list(likers)
+
+    return paginator.get_paginated_response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes((AllowAny,))
+def getPostsFiltered(request, tag):
+    filtered_posts = Contents_Detail.objects.filter(date_check=True, del_yn=False, tag__contains=tag).order_by('-created_at')
+    paginator = PageNumberPagination()
+    paginator.page_size = 10
+    result_page = paginator.paginate_queryset(filtered_posts, request)
+
+    serializer = ContentsD_Serializer(result_page, many=True)
+
+    this_data = serializer.data
+    
+    for i in range(0,len(this_data)):
+        this_user = User.objects.get(id=this_data[i]['user_id'])
+        # nickname, profile_img 추가
+        this_userprofile = UserProfile_Master.objects.get(user_id=this_user)
+        nickname =  this_userprofile.nickname
+        profile_img =  this_userprofile.profile_img.url
         
-        # total_point 추가 -> 는 포인트 없애면서 보류
-        # try : 
-        #     total_point = UserPoint_Master.objects.get(user_id=this_user).total_point
-        # except :
-        #     total_point = 0
+        this_data[i]['current_user'] = {
+            'nickname' : nickname,
+            'profile_img' : profile_img
+        }
+
+        # 좋아요 한 유저 추가
+        likers = Likes_History.objects.filter(content_id=this_data[i]['id'], del_yn=False).values_list('user_id', flat=True)
         
-        # this_data[i]['current_user']['total_point'] = total_point
+        this_data[i]['likers'] = list(likers)
 
     return paginator.get_paginated_response(serializer.data)
 
