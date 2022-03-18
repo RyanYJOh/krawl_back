@@ -13,7 +13,7 @@ class UserProfile_Master(models.Model):
 
     user_id = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_profile', null=False)
     nickname = models.CharField(max_length=10, blank=False, default="스티븐 #"+str(random.choice(list__index)))
-    profile_img = models.ImageField(null=True, blank=True, upload_to='profile_imgs', default='strange.jpeg') 
+    profile_img = models.ImageField(null=True, blank=True, upload_to='profile_imgs', default='profile_imgs/strange_uchtn8.jpg') 
 
     def __str__(self):
         return self.user_id.username + ' : ' + self.nickname
